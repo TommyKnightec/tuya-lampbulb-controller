@@ -9,6 +9,7 @@ DEVICEKEY = "" # Replace this with the key found by tiny tuya scanner
 DEVICEVERS = "3.3" # Replace this with your device version. At the time of writing most bulbs seem to be version 3.3.
 
 # Initialize the bulb device
+print('Looking for device...')
 d = tinytuya.BulbDevice(DEVICEID, DEVICEIP, DEVICEKEY)
 d.set_version(float(DEVICEVERS))  # Always set version
 d.set_socketPersistent(True)  # Keep socket connection open
@@ -40,12 +41,44 @@ def status():
 # Get a list of the colors in the rainbow
 colors = list(rainbow.keys())
 
+def clamp(value, min_value=0, max_value=100):
+    return max(min_value, min(value, max_value))
 def set_brightness(level):
-    print(f'Setting brightness to {level}%')
-    d.set_brightness_percentage(level)
+    global brightness_level
 
+    clamped_level = clamp(level, 0, 100) # Clamp the value before sending it to bulb
+    brightness_level = clamped_level # Set global variable to new level
+    print(f'Setting brightness to {brightness_level}%')
+    d.set_brightness_percentage(brightness_level)
+
+def increase_brightness(amount):
+    global brightness_level
+
+    new_brightness = brightness_level + amount
+    set_brightness(new_brightness)
+
+def decrease_brightness(amount):
+    global brightness_level
+
+    new_brightness = brightness_level - amount
+    set_brightness(new_brightness)
+
+def next_color():
+    global color_index
+
+    index = color_index + 1
+    set_color(index)
+
+def prev_color():
+    global color_index
+    
+    index = (color_index - 1)
+    set_color(index)
 def set_color(index):
-    color_name = colors[index]
+    global color_index
+
+    color_index = index % len(colors) # Force the index to be in bounds
+    color_name = colors[color_index]
     r, g, b = rainbow[color_name]
     print(f'Setting color to {color_name} ({r}, {g}, {b})')
     d.set_colour(r, g, b)
@@ -64,34 +97,32 @@ print("Use arrow keys to control the bulb. Up/Down to adjust brightness. Left/Ri
 print("Press ESC, 'E', or 'Q' to exit the program.")
 
 try:
+    turn_on()
     while True:
         if keyboard.is_pressed('up'):
-            if brightness_level < 100:
-                brightness_level += 10
-                set_brightness(brightness_level)
+            increase_brightness(10)
             time.sleep(0.2)  # Debounce delay
 
         if keyboard.is_pressed('down'):
-            if brightness_level > 0:
-                brightness_level -= 10
-                set_brightness(brightness_level)
+            decrease_brightness(10)
             time.sleep(0.2)  # Debounce delay
 
         if keyboard.is_pressed('right'):
-            color_index = (color_index + 1) % len(colors)
-            set_color(color_index)
+            next_color()
             time.sleep(0.2)  # Debounce delay
 
         if keyboard.is_pressed('left'):
-            color_index = (color_index - 1) % len(colors)
-            set_color(color_index)
+            prev_color()
             time.sleep(0.2)  # Debounce delay
+
         if keyboard.is_pressed('o') or keyboard.is_pressed('1') :
             turn_on()
             time.sleep(0.2)  # Debounce delay
+
         if keyboard.is_pressed('f') or keyboard.is_pressed('0') :
             turn_off()
             time.sleep(0.2)  # Debounce delay
+
         # Check for ESC, E, or Q key to exit
         if keyboard.is_pressed('esc') or keyboard.is_pressed('e') or keyboard.is_pressed('q'):
             print("Exit key pressed. Exiting program...")
