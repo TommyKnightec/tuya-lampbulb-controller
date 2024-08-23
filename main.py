@@ -6,7 +6,7 @@ import keyboard
 DEVICEID = "" # Replace this with your device id
 DEVICEIP = "" # Replace this with your device IP
 DEVICEKEY = "" # Replace this with the key found by tiny tuya scanner
-DEVICEVERS = "3.3"
+DEVICEVERS = "3.3" # Replace this with your device version. At the time of writing most bulbs seem to be version 3.3.
 
 # Initialize the bulb device
 d = tinytuya.BulbDevice(DEVICEID, DEVICEIP, DEVICEKEY)
