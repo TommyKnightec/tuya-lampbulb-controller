@@ -79,10 +79,18 @@ def decrease_brightness(amount):
 
 def set_color(index):
     global color_index
+    global brightness_level
 
     color_index = index % len(colors) # Force the index to be in bounds
     color_name = colors[color_index]
     r, g, b = rainbow[color_name]
+
+    # Adjust the RGB values based on the current brightness level
+    brightness_factor = brightness_level / 100
+    r = int(r * brightness_factor)
+    g = int(g * brightness_factor)
+    b = int(b * brightness_factor)
+
     print(f'Setting color to {color_name} ({r}, {g}, {b})')
     d.set_colour(r, g, b)
 
