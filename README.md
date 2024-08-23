@@ -29,3 +29,9 @@ The project uses keyboard input to control the smart bulb. Below is a descriptio
 - **`ESC`, lowercase `e`, or lowercase `q`**: Exits the program.
 
 The program includes a debounce delay of 0.2 seconds to prevent accidental multiple inputs.
+
+## Copy to other project
+Look in the main.py to see how a device is initialized. When your device is initialized, you can copy the methods you need in lightbulb_methods.py.
+
+### Class
+If you want to use a class that encapsulates the methods instead, see the lightbulb-class branch here [Lightbulb class branch](https://github.com/TommyKnightec/tuya-lampbulb-controller/tree/lightbulb-class).
