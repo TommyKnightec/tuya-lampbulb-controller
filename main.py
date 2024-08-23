@@ -8,6 +8,19 @@ DEVICEIP = "" # Replace this with your device IP
 DEVICEKEY = "" # Replace this with the key found by tiny tuya scanner
 DEVICEVERS = "3.3" # Replace this with your device version. At the time of writing most bulbs seem to be version 3.3.
 
+# Validate that all required strings are filled out
+if not all([DEVICEID, DEVICEIP, DEVICEKEY, DEVICEVERS]):
+    print("Error: One or more required fields are missing!")
+    if not DEVICEID:
+        print("DEVICEID is missing.")
+    if not DEVICEIP:
+        print("DEVICEIP is missing.")
+    if not DEVICEKEY:
+        print("DEVICEKEY is missing.")
+    if not DEVICEVERS:
+        print("DEVICEVERS is missing.")
+    exit()
+
 # Initialize the bulb device
 print('Looking for device...')
 d = tinytuya.BulbDevice(DEVICEID, DEVICEIP, DEVICEKEY)
@@ -33,16 +46,17 @@ rainbow = {
     "violet": [139, 0, 255]
 }
 
+# Get a list of the colors in the rainbow
+colors = list(rainbow.keys())
 
 def status():
     d = tinytuya.Device(DEVICEID, DEVICEIP, DEVICEKEY, version=DEVICEVERS)
     data = d.status()
     print('Device status: %r' % data)
-# Get a list of the colors in the rainbow
-colors = list(rainbow.keys())
 
 def clamp(value, min_value=0, max_value=100):
     return max(min_value, min(value, max_value))
+
 def set_brightness(level):
     global brightness_level
 
@@ -63,17 +77,6 @@ def decrease_brightness(amount):
     new_brightness = brightness_level - amount
     set_brightness(new_brightness)
 
-def next_color():
-    global color_index
-
-    index = color_index + 1
-    set_color(index)
-
-def prev_color():
-    global color_index
-    
-    index = (color_index - 1)
-    set_color(index)
 def set_color(index):
     global color_index
 
@@ -82,9 +85,23 @@ def set_color(index):
     r, g, b = rainbow[color_name]
     print(f'Setting color to {color_name} ({r}, {g}, {b})')
     d.set_colour(r, g, b)
+
+def next_color():
+    global color_index
+
+    index = color_index + 1
+    set_color(index)
+
+def prev_color():
+    global color_index
+
+    index = (color_index - 1)
+    set_color(index)
+
 def turn_on():
     print('Turning on')
     d.turn_on()
+
 def turn_off():
     print('Turning off')
     d.turn_off()
