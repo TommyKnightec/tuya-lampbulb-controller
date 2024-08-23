@@ -3,9 +3,9 @@ import tinytuya
 import time
 import keyboard
 
-DEVICEID = "bf29c3ffa8ddbd78892mit"
-DEVICEIP = "192.168.0.110"
-DEVICEKEY = "dad8e175b0be17cf"
+DEVICEID = "" # Replace this with your device id
+DEVICEIP = "" # Replace this with your device IP
+DEVICEKEY = "" # Replace this with the key found by tiny tuya scanner
 DEVICEVERS = "3.3"
 
 # Initialize the bulb device
